@@ -4,7 +4,7 @@ use core::fmt::{self, Arguments, Write};
 
 use cortex_m;
 
-use peripheral;
+// use peripheral;
 
 struct Port {}
 
@@ -29,13 +29,13 @@ impl Write for Port {
 /// - Must be called once
 /// - Must be called in an interrupt-free environment
 pub unsafe fn init() {
-    let dbgmcu = peripheral::dbgmcu_mut();
+    // let dbgmcu = peripheral::dbgmcu_mut();
     let dcb = cortex_m::peripheral::dcb_mut();
     let itm = cortex_m::peripheral::itm_mut();
 
     // DBGMCU: enable asynchronous tracing
     // NOTE(0b00) asynchronous mode
-    dbgmcu.cr.modify(|_, w| w.trace_ioen(true).trace_mode(0b00));
+    // dbgmcu.cr.modify(|_, w| w.trace_ioen(true).trace_mode(0b00));
 
     // DCB: enable the ITM
     let demcr = dcb.demcr.read();

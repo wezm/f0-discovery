@@ -66,7 +66,7 @@
 //! [target.thumbv7em-none-eabihf]
 //! rustflags = [
 //!     "-C",
-//!     "link-arg=-Tstm32f3discovery.ld",
+//!     "link-arg=-Tstm32f0discovery.ld",
 //!     "-C",
 //!     "link-arg=-nostartfiles",
 //! ]
@@ -152,15 +152,15 @@ pub mod delay;
 #[cfg(feature = "examples")]
 pub mod examples;
 pub mod exception;
-pub mod fpu;
+// pub mod fpu;
 pub mod interrupt;
 pub mod itm;
-pub mod l3gd20;
+// pub mod l3gd20;
 pub mod led;
-pub mod lsm303dlhc;
+// pub mod lsm303dlhc;
 pub mod peripheral;
 pub mod serial;
-pub mod timeit;
+// pub mod timeit;
 
 #[derive(Debug)]
 pub struct I16x3 {
@@ -174,15 +174,15 @@ pub struct I16x3 {
 #[doc(hidden)]
 pub unsafe fn _init() {
     delay::init();
-    fpu::init();
+    // fpu::init();
     itm::init();
-    l3gd20::init();
+    // l3gd20::init();
     led::init();
-    lsm303dlhc::init();
+    // lsm303dlhc::init();
     serial::init();
-    timeit::init();
+    // timeit::init();
 }
 
 // Hz
-const APB1_CLOCK: u32 = 8_000_000;
+// const APB1_CLOCK: u32 = 8_000_000;
 const APB2_CLOCK: u32 = 8_000_000;

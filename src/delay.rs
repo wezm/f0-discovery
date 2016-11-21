@@ -2,7 +2,7 @@
 //!
 //! # Implementation details
 //!
-//! This module uses the TIM7 peripheral and the `_tim7` interrupt under the
+//! This module uses the TIM6 peripheral and the `_tim6` interrupt under the
 //! hood.
 
 use peripheral;
@@ -10,27 +10,27 @@ use peripheral;
 /// Blocks for `n` ms
 pub fn ms(n: u16) {
     unsafe {
-        let tim7 = peripheral::tim7_mut();
+        let tim6 = peripheral::tim6_mut();
 
         // The alarm (the "update event") will set off in `n` "ticks".
         // One tick = 1 ms (see `init`)
-        tim7.arr.write(|w| w.arr(n));
+        tim6.arr.write(|w| w.arr(n));
 
         // Generate an update event to update the autoreload register
-        tim7.egr.write(|w| w.ug(true));
+        tim6.egr.write(|w| w.ug(true));
 
         // Clear any previous "update" event by clearing the update event flag
-        tim7.sr.read();
-        tim7.sr.write(|w| w);
+        tim6.sr.read();
+        tim6.sr.write(|w| w);
 
         // CEN: Enable the counter
-        tim7.cr1.modify(|_, w| w.cen(true));
+        tim6.cr1.modify(|_, w| w.cen(true));
 
         // Wait until the alarm goes off (the "update event" occurs)
-        while !tim7.sr.read().uif() {}
+        while !tim6.sr.read().uif() {}
 
         // Clear the "update" flag
-        tim7.sr.write(|w| w);
+        tim6.sr.write(|w| w);
     }
 }
 
@@ -42,15 +42,15 @@ pub fn ms(n: u16) {
 /// - Must be called in an interrupt-free environment
 pub unsafe fn init() {
     let rcc = peripheral::rcc_mut();
-    let tim7 = peripheral::tim7_mut();
+    let tim6 = peripheral::tim6_mut();
 
-    // RCC: Enable TIM7
-    rcc.apb1enr.modify(|_, w| w.tim7en(true));
+    // RCC: Enable TIM6
+    rcc.apb1enr.modify(|_, w| w.tim6en(true));
 
     // CEN: Disable the clock
     // OPM. Enable One Pulse Mode. Stop the counter after the next update event.
-    tim7.cr1.write(|w| w.cen(false).opm(true));
+    tim6.cr1.write(|w| w.cen(false).opm(true));
 
     // Set pre-scaler to 8_000 -> Frequency = 1 KHz
-    tim7.psc.write(|w| w.psc(7_999));
+    tim6.psc.write(|w| w.psc(7_999));
 }

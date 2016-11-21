@@ -1,4 +1,4 @@
-# [ doc = "Serial peripheral interface/Inter-IC sound" ]
+# [ doc = "Serial peripheral interface" ]
 # [ repr ( C ) ]
 pub struct Spi {
     # [ doc = "0x00 - control register 1" ]

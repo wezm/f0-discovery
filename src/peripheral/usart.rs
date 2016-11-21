@@ -59,96 +59,9 @@ pub struct Cr1R {
 }
 
 impl Cr1R {
-    # [ doc = "Bit 27 - End of Block interrupt enable" ]
-    pub fn eobie(&self) -> bool {
-        const OFFSET: u8 = 27u8;
-        self.bits & (1 << OFFSET) != 0
-    }
-    # [ doc = "Bit 26 - Receiver timeout interrupt enable" ]
-    pub fn rtoie(&self) -> bool {
-        const OFFSET: u8 = 26u8;
-        self.bits & (1 << OFFSET) != 0
-    }
-    # [ doc = "Bits 21:25 - Driver Enable assertion time" ]
-    pub fn deat(&self) -> u8 {
-        const MASK: u32 = 31;
-        const OFFSET: u8 = 21u8;
-        ((self.bits >> OFFSET) & MASK) as u8
-    }
-    # [ doc = "Bits 16:20 - Driver Enable deassertion time" ]
-    pub fn dedt(&self) -> u8 {
-        const MASK: u32 = 31;
-        const OFFSET: u8 = 16u8;
-        ((self.bits >> OFFSET) & MASK) as u8
-    }
-    # [ doc = "Bit 15 - Oversampling mode" ]
-    pub fn over8(&self) -> bool {
-        const OFFSET: u8 = 15u8;
-        self.bits & (1 << OFFSET) != 0
-    }
-    # [ doc = "Bit 14 - Character match interrupt enable" ]
-    pub fn cmie(&self) -> bool {
-        const OFFSET: u8 = 14u8;
-        self.bits & (1 << OFFSET) != 0
-    }
-    # [ doc = "Bit 13 - Mute mode enable" ]
-    pub fn mme(&self) -> bool {
-        const OFFSET: u8 = 13u8;
-        self.bits & (1 << OFFSET) != 0
-    }
-    # [ doc = "Bit 12 - Word length" ]
-    pub fn m(&self) -> bool {
-        const OFFSET: u8 = 12u8;
-        self.bits & (1 << OFFSET) != 0
-    }
-    # [ doc = "Bit 11 - Receiver wakeup method" ]
-    pub fn wake(&self) -> bool {
-        const OFFSET: u8 = 11u8;
-        self.bits & (1 << OFFSET) != 0
-    }
-    # [ doc = "Bit 10 - Parity control enable" ]
-    pub fn pce(&self) -> bool {
-        const OFFSET: u8 = 10u8;
-        self.bits & (1 << OFFSET) != 0
-    }
-    # [ doc = "Bit 9 - Parity selection" ]
-    pub fn ps(&self) -> bool {
-        const OFFSET: u8 = 9u8;
-        self.bits & (1 << OFFSET) != 0
-    }
-    # [ doc = "Bit 8 - PE interrupt enable" ]
-    pub fn peie(&self) -> bool {
-        const OFFSET: u8 = 8u8;
-        self.bits & (1 << OFFSET) != 0
-    }
-    # [ doc = "Bit 7 - interrupt enable" ]
-    pub fn txeie(&self) -> bool {
-        const OFFSET: u8 = 7u8;
-        self.bits & (1 << OFFSET) != 0
-    }
-    # [ doc = "Bit 6 - Transmission complete interrupt enable" ]
-    pub fn tcie(&self) -> bool {
-        const OFFSET: u8 = 6u8;
-        self.bits & (1 << OFFSET) != 0
-    }
-    # [ doc = "Bit 5 - RXNE interrupt enable" ]
-    pub fn rxneie(&self) -> bool {
-        const OFFSET: u8 = 5u8;
-        self.bits & (1 << OFFSET) != 0
-    }
-    # [ doc = "Bit 4 - IDLE interrupt enable" ]
-    pub fn idleie(&self) -> bool {
-        const OFFSET: u8 = 4u8;
-        self.bits & (1 << OFFSET) != 0
-    }
-    # [ doc = "Bit 3 - Transmitter enable" ]
-    pub fn te(&self) -> bool {
-        const OFFSET: u8 = 3u8;
-        self.bits & (1 << OFFSET) != 0
-    }
-    # [ doc = "Bit 2 - Receiver enable" ]
-    pub fn re(&self) -> bool {
-        const OFFSET: u8 = 2u8;
+    # [ doc = "Bit 0 - USART enable" ]
+    pub fn ue(&self) -> bool {
+        const OFFSET: u8 = 0u8;
         self.bits & (1 << OFFSET) != 0
     }
     # [ doc = "Bit 1 - USART enable in Stop mode" ]
@@ -156,9 +69,101 @@ impl Cr1R {
         const OFFSET: u8 = 1u8;
         self.bits & (1 << OFFSET) != 0
     }
-    # [ doc = "Bit 0 - USART enable" ]
-    pub fn ue(&self) -> bool {
-        const OFFSET: u8 = 0u8;
+    # [ doc = "Bit 2 - Receiver enable" ]
+    pub fn re(&self) -> bool {
+        const OFFSET: u8 = 2u8;
+        self.bits & (1 << OFFSET) != 0
+    }
+    # [ doc = "Bit 3 - Transmitter enable" ]
+    pub fn te(&self) -> bool {
+        const OFFSET: u8 = 3u8;
+        self.bits & (1 << OFFSET) != 0
+    }
+    # [ doc = "Bit 4 - IDLE interrupt enable" ]
+    pub fn idleie(&self) -> bool {
+        const OFFSET: u8 = 4u8;
+        self.bits & (1 << OFFSET) != 0
+    }
+    # [ doc = "Bit 5 - RXNE interrupt enable" ]
+    pub fn rxneie(&self) -> bool {
+        const OFFSET: u8 = 5u8;
+        self.bits & (1 << OFFSET) != 0
+    }
+    # [ doc = "Bit 6 - Transmission complete interrupt enable" ]
+    pub fn tcie(&self) -> bool {
+        const OFFSET: u8 = 6u8;
+        self.bits & (1 << OFFSET) != 0
+    }
+    # [ doc = "Bit 7 - interrupt enable" ]
+    pub fn txeie(&self) -> bool {
+        const OFFSET: u8 = 7u8;
+        self.bits & (1 << OFFSET) != 0
+    }
+    # [ doc = "Bit 8 - PE interrupt enable" ]
+    pub fn peie(&self) -> bool {
+        const OFFSET: u8 = 8u8;
+        self.bits & (1 << OFFSET) != 0
+    }
+    # [ doc = "Bit 9 - Parity selection" ]
+    pub fn ps(&self) -> bool {
+        const OFFSET: u8 = 9u8;
+        self.bits & (1 << OFFSET) != 0
+    }
+    # [ doc = "Bit 10 - Parity control enable" ]
+    pub fn pce(&self) -> bool {
+        const OFFSET: u8 = 10u8;
+        self.bits & (1 << OFFSET) != 0
+    }
+    # [ doc = "Bit 11 - Receiver wakeup method" ]
+    pub fn wake(&self) -> bool {
+        const OFFSET: u8 = 11u8;
+        self.bits & (1 << OFFSET) != 0
+    }
+    # [ doc = "Bit 12 - Word length" ]
+    pub fn m(&self) -> bool {
+        const OFFSET: u8 = 12u8;
+        self.bits & (1 << OFFSET) != 0
+    }
+    # [ doc = "Bit 13 - Mute mode enable" ]
+    pub fn mme(&self) -> bool {
+        const OFFSET: u8 = 13u8;
+        self.bits & (1 << OFFSET) != 0
+    }
+    # [ doc = "Bit 14 - Character match interrupt enable" ]
+    pub fn cmie(&self) -> bool {
+        const OFFSET: u8 = 14u8;
+        self.bits & (1 << OFFSET) != 0
+    }
+    # [ doc = "Bit 15 - Oversampling mode" ]
+    pub fn over8(&self) -> bool {
+        const OFFSET: u8 = 15u8;
+        self.bits & (1 << OFFSET) != 0
+    }
+    # [ doc = "Bits 16:20 - Driver Enable deassertion time" ]
+    pub fn dedt(&self) -> u8 {
+        const MASK: u32 = 31;
+        const OFFSET: u8 = 16u8;
+        ((self.bits >> OFFSET) & MASK) as u8
+    }
+    # [ doc = "Bits 21:25 - Driver Enable assertion time" ]
+    pub fn deat(&self) -> u8 {
+        const MASK: u32 = 31;
+        const OFFSET: u8 = 21u8;
+        ((self.bits >> OFFSET) & MASK) as u8
+    }
+    # [ doc = "Bit 26 - Receiver timeout interrupt enable" ]
+    pub fn rtoie(&self) -> bool {
+        const OFFSET: u8 = 26u8;
+        self.bits & (1 << OFFSET) != 0
+    }
+    # [ doc = "Bit 27 - End of Block interrupt enable" ]
+    pub fn eobie(&self) -> bool {
+        const OFFSET: u8 = 27u8;
+        self.bits & (1 << OFFSET) != 0
+    }
+    # [ doc = "Bit 28 - Word length" ]
+    pub fn m1(&self) -> bool {
+        const OFFSET: u8 = 28u8;
         self.bits & (1 << OFFSET) != 0
     }
 }
@@ -174,175 +179,9 @@ impl Cr1W {
     pub fn reset_value() -> Self {
         Cr1W { bits: 0u32 }
     }
-    # [ doc = "Bit 27 - End of Block interrupt enable" ]
-    pub fn eobie(&mut self, value: bool) -> &mut Self {
-        const OFFSET: u8 = 27u8;
-        if value {
-            self.bits |= 1 << OFFSET;
-        } else {
-            self.bits &= !(1 << OFFSET);
-        }
-        self
-    }
-    # [ doc = "Bit 26 - Receiver timeout interrupt enable" ]
-    pub fn rtoie(&mut self, value: bool) -> &mut Self {
-        const OFFSET: u8 = 26u8;
-        if value {
-            self.bits |= 1 << OFFSET;
-        } else {
-            self.bits &= !(1 << OFFSET);
-        }
-        self
-    }
-    # [ doc = "Bits 21:25 - Driver Enable assertion time" ]
-    pub fn deat(&mut self, value: u8) -> &mut Self {
-        const OFFSET: u8 = 21u8;
-        const MASK: u8 = 31;
-        self.bits &= !((MASK as u32) << OFFSET);
-        self.bits |= ((value & MASK) as u32) << OFFSET;
-        self
-    }
-    # [ doc = "Bits 16:20 - Driver Enable deassertion time" ]
-    pub fn dedt(&mut self, value: u8) -> &mut Self {
-        const OFFSET: u8 = 16u8;
-        const MASK: u8 = 31;
-        self.bits &= !((MASK as u32) << OFFSET);
-        self.bits |= ((value & MASK) as u32) << OFFSET;
-        self
-    }
-    # [ doc = "Bit 15 - Oversampling mode" ]
-    pub fn over8(&mut self, value: bool) -> &mut Self {
-        const OFFSET: u8 = 15u8;
-        if value {
-            self.bits |= 1 << OFFSET;
-        } else {
-            self.bits &= !(1 << OFFSET);
-        }
-        self
-    }
-    # [ doc = "Bit 14 - Character match interrupt enable" ]
-    pub fn cmie(&mut self, value: bool) -> &mut Self {
-        const OFFSET: u8 = 14u8;
-        if value {
-            self.bits |= 1 << OFFSET;
-        } else {
-            self.bits &= !(1 << OFFSET);
-        }
-        self
-    }
-    # [ doc = "Bit 13 - Mute mode enable" ]
-    pub fn mme(&mut self, value: bool) -> &mut Self {
-        const OFFSET: u8 = 13u8;
-        if value {
-            self.bits |= 1 << OFFSET;
-        } else {
-            self.bits &= !(1 << OFFSET);
-        }
-        self
-    }
-    # [ doc = "Bit 12 - Word length" ]
-    pub fn m(&mut self, value: bool) -> &mut Self {
-        const OFFSET: u8 = 12u8;
-        if value {
-            self.bits |= 1 << OFFSET;
-        } else {
-            self.bits &= !(1 << OFFSET);
-        }
-        self
-    }
-    # [ doc = "Bit 11 - Receiver wakeup method" ]
-    pub fn wake(&mut self, value: bool) -> &mut Self {
-        const OFFSET: u8 = 11u8;
-        if value {
-            self.bits |= 1 << OFFSET;
-        } else {
-            self.bits &= !(1 << OFFSET);
-        }
-        self
-    }
-    # [ doc = "Bit 10 - Parity control enable" ]
-    pub fn pce(&mut self, value: bool) -> &mut Self {
-        const OFFSET: u8 = 10u8;
-        if value {
-            self.bits |= 1 << OFFSET;
-        } else {
-            self.bits &= !(1 << OFFSET);
-        }
-        self
-    }
-    # [ doc = "Bit 9 - Parity selection" ]
-    pub fn ps(&mut self, value: bool) -> &mut Self {
-        const OFFSET: u8 = 9u8;
-        if value {
-            self.bits |= 1 << OFFSET;
-        } else {
-            self.bits &= !(1 << OFFSET);
-        }
-        self
-    }
-    # [ doc = "Bit 8 - PE interrupt enable" ]
-    pub fn peie(&mut self, value: bool) -> &mut Self {
-        const OFFSET: u8 = 8u8;
-        if value {
-            self.bits |= 1 << OFFSET;
-        } else {
-            self.bits &= !(1 << OFFSET);
-        }
-        self
-    }
-    # [ doc = "Bit 7 - interrupt enable" ]
-    pub fn txeie(&mut self, value: bool) -> &mut Self {
-        const OFFSET: u8 = 7u8;
-        if value {
-            self.bits |= 1 << OFFSET;
-        } else {
-            self.bits &= !(1 << OFFSET);
-        }
-        self
-    }
-    # [ doc = "Bit 6 - Transmission complete interrupt enable" ]
-    pub fn tcie(&mut self, value: bool) -> &mut Self {
-        const OFFSET: u8 = 6u8;
-        if value {
-            self.bits |= 1 << OFFSET;
-        } else {
-            self.bits &= !(1 << OFFSET);
-        }
-        self
-    }
-    # [ doc = "Bit 5 - RXNE interrupt enable" ]
-    pub fn rxneie(&mut self, value: bool) -> &mut Self {
-        const OFFSET: u8 = 5u8;
-        if value {
-            self.bits |= 1 << OFFSET;
-        } else {
-            self.bits &= !(1 << OFFSET);
-        }
-        self
-    }
-    # [ doc = "Bit 4 - IDLE interrupt enable" ]
-    pub fn idleie(&mut self, value: bool) -> &mut Self {
-        const OFFSET: u8 = 4u8;
-        if value {
-            self.bits |= 1 << OFFSET;
-        } else {
-            self.bits &= !(1 << OFFSET);
-        }
-        self
-    }
-    # [ doc = "Bit 3 - Transmitter enable" ]
-    pub fn te(&mut self, value: bool) -> &mut Self {
-        const OFFSET: u8 = 3u8;
-        if value {
-            self.bits |= 1 << OFFSET;
-        } else {
-            self.bits &= !(1 << OFFSET);
-        }
-        self
-    }
-    # [ doc = "Bit 2 - Receiver enable" ]
-    pub fn re(&mut self, value: bool) -> &mut Self {
-        const OFFSET: u8 = 2u8;
+    # [ doc = "Bit 0 - USART enable" ]
+    pub fn ue(&mut self, value: bool) -> &mut Self {
+        const OFFSET: u8 = 0u8;
         if value {
             self.bits |= 1 << OFFSET;
         } else {
@@ -360,9 +199,185 @@ impl Cr1W {
         }
         self
     }
-    # [ doc = "Bit 0 - USART enable" ]
-    pub fn ue(&mut self, value: bool) -> &mut Self {
-        const OFFSET: u8 = 0u8;
+    # [ doc = "Bit 2 - Receiver enable" ]
+    pub fn re(&mut self, value: bool) -> &mut Self {
+        const OFFSET: u8 = 2u8;
+        if value {
+            self.bits |= 1 << OFFSET;
+        } else {
+            self.bits &= !(1 << OFFSET);
+        }
+        self
+    }
+    # [ doc = "Bit 3 - Transmitter enable" ]
+    pub fn te(&mut self, value: bool) -> &mut Self {
+        const OFFSET: u8 = 3u8;
+        if value {
+            self.bits |= 1 << OFFSET;
+        } else {
+            self.bits &= !(1 << OFFSET);
+        }
+        self
+    }
+    # [ doc = "Bit 4 - IDLE interrupt enable" ]
+    pub fn idleie(&mut self, value: bool) -> &mut Self {
+        const OFFSET: u8 = 4u8;
+        if value {
+            self.bits |= 1 << OFFSET;
+        } else {
+            self.bits &= !(1 << OFFSET);
+        }
+        self
+    }
+    # [ doc = "Bit 5 - RXNE interrupt enable" ]
+    pub fn rxneie(&mut self, value: bool) -> &mut Self {
+        const OFFSET: u8 = 5u8;
+        if value {
+            self.bits |= 1 << OFFSET;
+        } else {
+            self.bits &= !(1 << OFFSET);
+        }
+        self
+    }
+    # [ doc = "Bit 6 - Transmission complete interrupt enable" ]
+    pub fn tcie(&mut self, value: bool) -> &mut Self {
+        const OFFSET: u8 = 6u8;
+        if value {
+            self.bits |= 1 << OFFSET;
+        } else {
+            self.bits &= !(1 << OFFSET);
+        }
+        self
+    }
+    # [ doc = "Bit 7 - interrupt enable" ]
+    pub fn txeie(&mut self, value: bool) -> &mut Self {
+        const OFFSET: u8 = 7u8;
+        if value {
+            self.bits |= 1 << OFFSET;
+        } else {
+            self.bits &= !(1 << OFFSET);
+        }
+        self
+    }
+    # [ doc = "Bit 8 - PE interrupt enable" ]
+    pub fn peie(&mut self, value: bool) -> &mut Self {
+        const OFFSET: u8 = 8u8;
+        if value {
+            self.bits |= 1 << OFFSET;
+        } else {
+            self.bits &= !(1 << OFFSET);
+        }
+        self
+    }
+    # [ doc = "Bit 9 - Parity selection" ]
+    pub fn ps(&mut self, value: bool) -> &mut Self {
+        const OFFSET: u8 = 9u8;
+        if value {
+            self.bits |= 1 << OFFSET;
+        } else {
+            self.bits &= !(1 << OFFSET);
+        }
+        self
+    }
+    # [ doc = "Bit 10 - Parity control enable" ]
+    pub fn pce(&mut self, value: bool) -> &mut Self {
+        const OFFSET: u8 = 10u8;
+        if value {
+            self.bits |= 1 << OFFSET;
+        } else {
+            self.bits &= !(1 << OFFSET);
+        }
+        self
+    }
+    # [ doc = "Bit 11 - Receiver wakeup method" ]
+    pub fn wake(&mut self, value: bool) -> &mut Self {
+        const OFFSET: u8 = 11u8;
+        if value {
+            self.bits |= 1 << OFFSET;
+        } else {
+            self.bits &= !(1 << OFFSET);
+        }
+        self
+    }
+    # [ doc = "Bit 12 - Word length" ]
+    pub fn m(&mut self, value: bool) -> &mut Self {
+        const OFFSET: u8 = 12u8;
+        if value {
+            self.bits |= 1 << OFFSET;
+        } else {
+            self.bits &= !(1 << OFFSET);
+        }
+        self
+    }
+    # [ doc = "Bit 13 - Mute mode enable" ]
+    pub fn mme(&mut self, value: bool) -> &mut Self {
+        const OFFSET: u8 = 13u8;
+        if value {
+            self.bits |= 1 << OFFSET;
+        } else {
+            self.bits &= !(1 << OFFSET);
+        }
+        self
+    }
+    # [ doc = "Bit 14 - Character match interrupt enable" ]
+    pub fn cmie(&mut self, value: bool) -> &mut Self {
+        const OFFSET: u8 = 14u8;
+        if value {
+            self.bits |= 1 << OFFSET;
+        } else {
+            self.bits &= !(1 << OFFSET);
+        }
+        self
+    }
+    # [ doc = "Bit 15 - Oversampling mode" ]
+    pub fn over8(&mut self, value: bool) -> &mut Self {
+        const OFFSET: u8 = 15u8;
+        if value {
+            self.bits |= 1 << OFFSET;
+        } else {
+            self.bits &= !(1 << OFFSET);
+        }
+        self
+    }
+    # [ doc = "Bits 16:20 - Driver Enable deassertion time" ]
+    pub fn dedt(&mut self, value: u8) -> &mut Self {
+        const OFFSET: u8 = 16u8;
+        const MASK: u8 = 31;
+        self.bits &= !((MASK as u32) << OFFSET);
+        self.bits |= ((value & MASK) as u32) << OFFSET;
+        self
+    }
+    # [ doc = "Bits 21:25 - Driver Enable assertion time" ]
+    pub fn deat(&mut self, value: u8) -> &mut Self {
+        const OFFSET: u8 = 21u8;
+        const MASK: u8 = 31;
+        self.bits &= !((MASK as u32) << OFFSET);
+        self.bits |= ((value & MASK) as u32) << OFFSET;
+        self
+    }
+    # [ doc = "Bit 26 - Receiver timeout interrupt enable" ]
+    pub fn rtoie(&mut self, value: bool) -> &mut Self {
+        const OFFSET: u8 = 26u8;
+        if value {
+            self.bits |= 1 << OFFSET;
+        } else {
+            self.bits &= !(1 << OFFSET);
+        }
+        self
+    }
+    # [ doc = "Bit 27 - End of Block interrupt enable" ]
+    pub fn eobie(&mut self, value: bool) -> &mut Self {
+        const OFFSET: u8 = 27u8;
+        if value {
+            self.bits |= 1 << OFFSET;
+        } else {
+            self.bits &= !(1 << OFFSET);
+        }
+        self
+    }
+    # [ doc = "Bit 28 - Word length" ]
+    pub fn m1(&mut self, value: bool) -> &mut Self {
+        const OFFSET: u8 = 28u8;
         if value {
             self.bits |= 1 << OFFSET;
         } else {

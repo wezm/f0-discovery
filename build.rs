@@ -4,7 +4,7 @@ use std::path::PathBuf;
 
 fn main() {
     // Pass our linker script to the top crate
-    let script = "stm32f3discovery.ld";
+    let script = "stm32f0discovery.ld";
     let src = PathBuf::from(env::var_os("CARGO_MANIFEST_DIR").unwrap());
     let out = PathBuf::from(env::var_os("OUT_DIR").unwrap());
 

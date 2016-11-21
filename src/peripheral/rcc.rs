@@ -27,6 +27,8 @@ pub struct Rcc {
     pub cfgr2: Cfgr2,
     # [ doc = "0x30 - Clock configuration register 3" ]
     pub cfgr3: Cfgr3,
+    # [ doc = "0x34 - Clock control register 2" ]
+    pub cr2: Cr2,
 }
 
 # [ repr ( C ) ]
@@ -241,21 +243,21 @@ impl CfgrR {
         ((self.bits >> OFFSET) & MASK) as u8
     }
     # [ doc = "Bits 8:10 - APB Low speed prescaler (APB1)" ]
-    pub fn ppre1(&self) -> u8 {
+    pub fn ppre(&self) -> u8 {
         const MASK: u32 = 7;
         const OFFSET: u8 = 8u8;
         ((self.bits >> OFFSET) & MASK) as u8
     }
-    # [ doc = "Bits 11:13 - APB high speed prescaler (APB2)" ]
-    pub fn ppre2(&self) -> u8 {
-        const MASK: u32 = 7;
-        const OFFSET: u8 = 11u8;
-        ((self.bits >> OFFSET) & MASK) as u8
-    }
-    # [ doc = "Bit 16 - PLL entry clock source" ]
-    pub fn pllsrc(&self) -> bool {
-        const OFFSET: u8 = 16u8;
+    # [ doc = "Bit 14 - ADC prescaler" ]
+    pub fn adcpre(&self) -> bool {
+        const OFFSET: u8 = 14u8;
         self.bits & (1 << OFFSET) != 0
+    }
+    # [ doc = "Bits 15:16 - PLL input clock source" ]
+    pub fn pllsrc(&self) -> u8 {
+        const MASK: u32 = 3;
+        const OFFSET: u8 = 15u8;
+        ((self.bits >> OFFSET) & MASK) as u8
     }
     # [ doc = "Bit 17 - HSE divider for PLL entry" ]
     pub fn pllxtpre(&self) -> bool {
@@ -268,25 +270,21 @@ impl CfgrR {
         const OFFSET: u8 = 18u8;
         ((self.bits >> OFFSET) & MASK) as u8
     }
-    # [ doc = "Bit 22 - USB prescaler" ]
-    pub fn usbpres(&self) -> bool {
-        const OFFSET: u8 = 22u8;
-        self.bits & (1 << OFFSET) != 0
-    }
     # [ doc = "Bits 24:26 - Microcontroller clock output" ]
     pub fn mco(&self) -> u8 {
         const MASK: u32 = 7;
         const OFFSET: u8 = 24u8;
         ((self.bits >> OFFSET) & MASK) as u8
     }
-    # [ doc = "Bit 28 - Microcontroller Clock Output Flag" ]
-    pub fn mcof(&self) -> bool {
+    # [ doc = "Bits 28:30 - Microcontroller Clock Output Prescaler" ]
+    pub fn mcopre(&self) -> u8 {
+        const MASK: u32 = 7;
         const OFFSET: u8 = 28u8;
-        self.bits & (1 << OFFSET) != 0
+        ((self.bits >> OFFSET) & MASK) as u8
     }
-    # [ doc = "Bit 23 - I2S external clock source selection" ]
-    pub fn i2ssrc(&self) -> bool {
-        const OFFSET: u8 = 23u8;
+    # [ doc = "Bit 31 - PLL clock not divided for MCO" ]
+    pub fn pllnodiv(&self) -> bool {
+        const OFFSET: u8 = 31u8;
         self.bits & (1 << OFFSET) != 0
     }
 }
@@ -319,29 +317,29 @@ impl CfgrW {
         self
     }
     # [ doc = "Bits 8:10 - APB Low speed prescaler (APB1)" ]
-    pub fn ppre1(&mut self, value: u8) -> &mut Self {
+    pub fn ppre(&mut self, value: u8) -> &mut Self {
         const OFFSET: u8 = 8u8;
         const MASK: u8 = 7;
         self.bits &= !((MASK as u32) << OFFSET);
         self.bits |= ((value & MASK) as u32) << OFFSET;
         self
     }
-    # [ doc = "Bits 11:13 - APB high speed prescaler (APB2)" ]
-    pub fn ppre2(&mut self, value: u8) -> &mut Self {
-        const OFFSET: u8 = 11u8;
-        const MASK: u8 = 7;
-        self.bits &= !((MASK as u32) << OFFSET);
-        self.bits |= ((value & MASK) as u32) << OFFSET;
-        self
-    }
-    # [ doc = "Bit 16 - PLL entry clock source" ]
-    pub fn pllsrc(&mut self, value: bool) -> &mut Self {
-        const OFFSET: u8 = 16u8;
+    # [ doc = "Bit 14 - ADC prescaler" ]
+    pub fn adcpre(&mut self, value: bool) -> &mut Self {
+        const OFFSET: u8 = 14u8;
         if value {
             self.bits |= 1 << OFFSET;
         } else {
             self.bits &= !(1 << OFFSET);
         }
+        self
+    }
+    # [ doc = "Bits 15:16 - PLL input clock source" ]
+    pub fn pllsrc(&mut self, value: u8) -> &mut Self {
+        const OFFSET: u8 = 15u8;
+        const MASK: u8 = 3;
+        self.bits &= !((MASK as u32) << OFFSET);
+        self.bits |= ((value & MASK) as u32) << OFFSET;
         self
     }
     # [ doc = "Bit 17 - HSE divider for PLL entry" ]
@@ -362,16 +360,6 @@ impl CfgrW {
         self.bits |= ((value & MASK) as u32) << OFFSET;
         self
     }
-    # [ doc = "Bit 22 - USB prescaler" ]
-    pub fn usbpres(&mut self, value: bool) -> &mut Self {
-        const OFFSET: u8 = 22u8;
-        if value {
-            self.bits |= 1 << OFFSET;
-        } else {
-            self.bits &= !(1 << OFFSET);
-        }
-        self
-    }
     # [ doc = "Bits 24:26 - Microcontroller clock output" ]
     pub fn mco(&mut self, value: u8) -> &mut Self {
         const OFFSET: u8 = 24u8;
@@ -380,9 +368,17 @@ impl CfgrW {
         self.bits |= ((value & MASK) as u32) << OFFSET;
         self
     }
-    # [ doc = "Bit 23 - I2S external clock source selection" ]
-    pub fn i2ssrc(&mut self, value: bool) -> &mut Self {
-        const OFFSET: u8 = 23u8;
+    # [ doc = "Bits 28:30 - Microcontroller Clock Output Prescaler" ]
+    pub fn mcopre(&mut self, value: u8) -> &mut Self {
+        const OFFSET: u8 = 28u8;
+        const MASK: u8 = 7;
+        self.bits &= !((MASK as u32) << OFFSET);
+        self.bits |= ((value & MASK) as u32) << OFFSET;
+        self
+    }
+    # [ doc = "Bit 31 - PLL clock not divided for MCO" ]
+    pub fn pllnodiv(&mut self, value: bool) -> &mut Self {
+        const OFFSET: u8 = 31u8;
         if value {
             self.bits |= 1 << OFFSET;
         } else {
@@ -451,6 +447,16 @@ impl CirR {
         const OFFSET: u8 = 4u8;
         self.bits & (1 << OFFSET) != 0
     }
+    # [ doc = "Bit 5 - HSI14 ready interrupt flag" ]
+    pub fn hsi14rdyf(&self) -> bool {
+        const OFFSET: u8 = 5u8;
+        self.bits & (1 << OFFSET) != 0
+    }
+    # [ doc = "Bit 6 - HSI48 ready interrupt flag" ]
+    pub fn hsi48rdyf(&self) -> bool {
+        const OFFSET: u8 = 6u8;
+        self.bits & (1 << OFFSET) != 0
+    }
     # [ doc = "Bit 7 - Clock Security System Interrupt flag" ]
     pub fn cssf(&self) -> bool {
         const OFFSET: u8 = 7u8;
@@ -479,6 +485,16 @@ impl CirR {
     # [ doc = "Bit 12 - PLL Ready Interrupt Enable" ]
     pub fn pllrdyie(&self) -> bool {
         const OFFSET: u8 = 12u8;
+        self.bits & (1 << OFFSET) != 0
+    }
+    # [ doc = "Bit 13 - HSI14 ready interrupt enable" ]
+    pub fn hsi14rdye(&self) -> bool {
+        const OFFSET: u8 = 13u8;
+        self.bits & (1 << OFFSET) != 0
+    }
+    # [ doc = "Bit 14 - HSI48 ready interrupt enable" ]
+    pub fn hsi48rdyie(&self) -> bool {
+        const OFFSET: u8 = 14u8;
         self.bits & (1 << OFFSET) != 0
     }
 }
@@ -544,6 +560,26 @@ impl CirW {
         }
         self
     }
+    # [ doc = "Bit 13 - HSI14 ready interrupt enable" ]
+    pub fn hsi14rdye(&mut self, value: bool) -> &mut Self {
+        const OFFSET: u8 = 13u8;
+        if value {
+            self.bits |= 1 << OFFSET;
+        } else {
+            self.bits &= !(1 << OFFSET);
+        }
+        self
+    }
+    # [ doc = "Bit 14 - HSI48 ready interrupt enable" ]
+    pub fn hsi48rdyie(&mut self, value: bool) -> &mut Self {
+        const OFFSET: u8 = 14u8;
+        if value {
+            self.bits |= 1 << OFFSET;
+        } else {
+            self.bits &= !(1 << OFFSET);
+        }
+        self
+    }
     # [ doc = "Bit 16 - LSI Ready Interrupt Clear" ]
     pub fn lsirdyc(&mut self, value: bool) -> &mut Self {
         const OFFSET: u8 = 16u8;
@@ -594,6 +630,26 @@ impl CirW {
         }
         self
     }
+    # [ doc = "Bit 21 - HSI 14 MHz Ready Interrupt Clear" ]
+    pub fn hsi14rdyc(&mut self, value: bool) -> &mut Self {
+        const OFFSET: u8 = 21u8;
+        if value {
+            self.bits |= 1 << OFFSET;
+        } else {
+            self.bits &= !(1 << OFFSET);
+        }
+        self
+    }
+    # [ doc = "Bit 22 - HSI48 Ready Interrupt Clear" ]
+    pub fn hsi48rdyc(&mut self, value: bool) -> &mut Self {
+        const OFFSET: u8 = 22u8;
+        if value {
+            self.bits |= 1 << OFFSET;
+        } else {
+            self.bits &= !(1 << OFFSET);
+        }
+        self
+    }
     # [ doc = "Bit 23 - Clock security system interrupt clear" ]
     pub fn cssc(&mut self, value: bool) -> &mut Self {
         const OFFSET: u8 = 23u8;
@@ -613,8 +669,7 @@ pub struct Apb2rstr {
 
 impl Apb2rstr {
     pub fn modify<F>(&mut self, f: F)
-        where for<'w> F: FnOnce(&Apb2rstrR, &'w mut Apb2rstrW)
-                                -> &'w mut Apb2rstrW
+        where for<'w> F: FnOnce(&Apb2rstrR, &'w mut Apb2rstrW) -> &'w mut Apb2rstrW
     {
         let bits = self.register.read();
         let r = Apb2rstrR { bits: bits };
@@ -646,6 +701,11 @@ impl Apb2rstrR {
         const OFFSET: u8 = 0u8;
         self.bits & (1 << OFFSET) != 0
     }
+    # [ doc = "Bit 9 - ADC interface reset" ]
+    pub fn adcrst(&self) -> bool {
+        const OFFSET: u8 = 9u8;
+        self.bits & (1 << OFFSET) != 0
+    }
     # [ doc = "Bit 11 - TIM1 timer reset" ]
     pub fn tim1rst(&self) -> bool {
         const OFFSET: u8 = 11u8;
@@ -654,11 +714,6 @@ impl Apb2rstrR {
     # [ doc = "Bit 12 - SPI 1 reset" ]
     pub fn spi1rst(&self) -> bool {
         const OFFSET: u8 = 12u8;
-        self.bits & (1 << OFFSET) != 0
-    }
-    # [ doc = "Bit 13 - TIM8 timer reset" ]
-    pub fn tim8rst(&self) -> bool {
-        const OFFSET: u8 = 13u8;
         self.bits & (1 << OFFSET) != 0
     }
     # [ doc = "Bit 14 - USART1 reset" ]
@@ -679,6 +734,11 @@ impl Apb2rstrR {
     # [ doc = "Bit 18 - TIM17 timer reset" ]
     pub fn tim17rst(&self) -> bool {
         const OFFSET: u8 = 18u8;
+        self.bits & (1 << OFFSET) != 0
+    }
+    # [ doc = "Bit 22 - Debug MCU reset" ]
+    pub fn dbgmcurst(&self) -> bool {
+        const OFFSET: u8 = 22u8;
         self.bits & (1 << OFFSET) != 0
     }
 }
@@ -704,6 +764,16 @@ impl Apb2rstrW {
         }
         self
     }
+    # [ doc = "Bit 9 - ADC interface reset" ]
+    pub fn adcrst(&mut self, value: bool) -> &mut Self {
+        const OFFSET: u8 = 9u8;
+        if value {
+            self.bits |= 1 << OFFSET;
+        } else {
+            self.bits &= !(1 << OFFSET);
+        }
+        self
+    }
     # [ doc = "Bit 11 - TIM1 timer reset" ]
     pub fn tim1rst(&mut self, value: bool) -> &mut Self {
         const OFFSET: u8 = 11u8;
@@ -717,16 +787,6 @@ impl Apb2rstrW {
     # [ doc = "Bit 12 - SPI 1 reset" ]
     pub fn spi1rst(&mut self, value: bool) -> &mut Self {
         const OFFSET: u8 = 12u8;
-        if value {
-            self.bits |= 1 << OFFSET;
-        } else {
-            self.bits &= !(1 << OFFSET);
-        }
-        self
-    }
-    # [ doc = "Bit 13 - TIM8 timer reset" ]
-    pub fn tim8rst(&mut self, value: bool) -> &mut Self {
-        const OFFSET: u8 = 13u8;
         if value {
             self.bits |= 1 << OFFSET;
         } else {
@@ -774,6 +834,16 @@ impl Apb2rstrW {
         }
         self
     }
+    # [ doc = "Bit 22 - Debug MCU reset" ]
+    pub fn dbgmcurst(&mut self, value: bool) -> &mut Self {
+        const OFFSET: u8 = 22u8;
+        if value {
+            self.bits |= 1 << OFFSET;
+        } else {
+            self.bits &= !(1 << OFFSET);
+        }
+        self
+    }
 }
 
 # [ repr ( C ) ]
@@ -783,8 +853,7 @@ pub struct Apb1rstr {
 
 impl Apb1rstr {
     pub fn modify<F>(&mut self, f: F)
-        where for<'w> F: FnOnce(&Apb1rstrR, &'w mut Apb1rstrW)
-                                -> &'w mut Apb1rstrW
+        where for<'w> F: FnOnce(&Apb1rstrR, &'w mut Apb1rstrW) -> &'w mut Apb1rstrW
     {
         let bits = self.register.read();
         let r = Apb1rstrR { bits: bits };
@@ -811,19 +880,9 @@ pub struct Apb1rstrR {
 }
 
 impl Apb1rstrR {
-    # [ doc = "Bit 0 - Timer 2 reset" ]
-    pub fn tim2rst(&self) -> bool {
-        const OFFSET: u8 = 0u8;
-        self.bits & (1 << OFFSET) != 0
-    }
     # [ doc = "Bit 1 - Timer 3 reset" ]
     pub fn tim3rst(&self) -> bool {
         const OFFSET: u8 = 1u8;
-        self.bits & (1 << OFFSET) != 0
-    }
-    # [ doc = "Bit 2 - Timer 14 reset" ]
-    pub fn tim4rst(&self) -> bool {
-        const OFFSET: u8 = 2u8;
         self.bits & (1 << OFFSET) != 0
     }
     # [ doc = "Bit 4 - Timer 6 reset" ]
@@ -831,9 +890,14 @@ impl Apb1rstrR {
         const OFFSET: u8 = 4u8;
         self.bits & (1 << OFFSET) != 0
     }
-    # [ doc = "Bit 5 - Timer 7 reset" ]
+    # [ doc = "Bit 5 - TIM7 timer reset" ]
     pub fn tim7rst(&self) -> bool {
         const OFFSET: u8 = 5u8;
+        self.bits & (1 << OFFSET) != 0
+    }
+    # [ doc = "Bit 8 - Timer 14 reset" ]
+    pub fn tim14rst(&self) -> bool {
+        const OFFSET: u8 = 8u8;
         self.bits & (1 << OFFSET) != 0
     }
     # [ doc = "Bit 11 - Window watchdog reset" ]
@@ -846,11 +910,6 @@ impl Apb1rstrR {
         const OFFSET: u8 = 14u8;
         self.bits & (1 << OFFSET) != 0
     }
-    # [ doc = "Bit 15 - SPI3 reset" ]
-    pub fn spi3rst(&self) -> bool {
-        const OFFSET: u8 = 15u8;
-        self.bits & (1 << OFFSET) != 0
-    }
     # [ doc = "Bit 17 - USART 2 reset" ]
     pub fn usart2rst(&self) -> bool {
         const OFFSET: u8 = 17u8;
@@ -861,13 +920,13 @@ impl Apb1rstrR {
         const OFFSET: u8 = 18u8;
         self.bits & (1 << OFFSET) != 0
     }
-    # [ doc = "Bit 19 - UART 4 reset" ]
-    pub fn uart4rst(&self) -> bool {
+    # [ doc = "Bit 19 - USART4 reset" ]
+    pub fn usart4rst(&self) -> bool {
         const OFFSET: u8 = 19u8;
         self.bits & (1 << OFFSET) != 0
     }
-    # [ doc = "Bit 20 - UART 5 reset" ]
-    pub fn uart5rst(&self) -> bool {
+    # [ doc = "Bit 20 - USART5 reset" ]
+    pub fn usart5rst(&self) -> bool {
         const OFFSET: u8 = 20u8;
         self.bits & (1 << OFFSET) != 0
     }
@@ -881,24 +940,14 @@ impl Apb1rstrR {
         const OFFSET: u8 = 22u8;
         self.bits & (1 << OFFSET) != 0
     }
-    # [ doc = "Bit 23 - USB reset" ]
+    # [ doc = "Bit 23 - USB interface reset" ]
     pub fn usbrst(&self) -> bool {
         const OFFSET: u8 = 23u8;
-        self.bits & (1 << OFFSET) != 0
-    }
-    # [ doc = "Bit 25 - CAN reset" ]
-    pub fn canrst(&self) -> bool {
-        const OFFSET: u8 = 25u8;
         self.bits & (1 << OFFSET) != 0
     }
     # [ doc = "Bit 28 - Power interface reset" ]
     pub fn pwrrst(&self) -> bool {
         const OFFSET: u8 = 28u8;
-        self.bits & (1 << OFFSET) != 0
-    }
-    # [ doc = "Bit 29 - DAC interface reset" ]
-    pub fn dacrst(&self) -> bool {
-        const OFFSET: u8 = 29u8;
         self.bits & (1 << OFFSET) != 0
     }
 }
@@ -914,29 +963,9 @@ impl Apb1rstrW {
     pub fn reset_value() -> Self {
         Apb1rstrW { bits: 0u32 }
     }
-    # [ doc = "Bit 0 - Timer 2 reset" ]
-    pub fn tim2rst(&mut self, value: bool) -> &mut Self {
-        const OFFSET: u8 = 0u8;
-        if value {
-            self.bits |= 1 << OFFSET;
-        } else {
-            self.bits &= !(1 << OFFSET);
-        }
-        self
-    }
     # [ doc = "Bit 1 - Timer 3 reset" ]
     pub fn tim3rst(&mut self, value: bool) -> &mut Self {
         const OFFSET: u8 = 1u8;
-        if value {
-            self.bits |= 1 << OFFSET;
-        } else {
-            self.bits &= !(1 << OFFSET);
-        }
-        self
-    }
-    # [ doc = "Bit 2 - Timer 14 reset" ]
-    pub fn tim4rst(&mut self, value: bool) -> &mut Self {
-        const OFFSET: u8 = 2u8;
         if value {
             self.bits |= 1 << OFFSET;
         } else {
@@ -954,9 +983,19 @@ impl Apb1rstrW {
         }
         self
     }
-    # [ doc = "Bit 5 - Timer 7 reset" ]
+    # [ doc = "Bit 5 - TIM7 timer reset" ]
     pub fn tim7rst(&mut self, value: bool) -> &mut Self {
         const OFFSET: u8 = 5u8;
+        if value {
+            self.bits |= 1 << OFFSET;
+        } else {
+            self.bits &= !(1 << OFFSET);
+        }
+        self
+    }
+    # [ doc = "Bit 8 - Timer 14 reset" ]
+    pub fn tim14rst(&mut self, value: bool) -> &mut Self {
+        const OFFSET: u8 = 8u8;
         if value {
             self.bits |= 1 << OFFSET;
         } else {
@@ -984,16 +1023,6 @@ impl Apb1rstrW {
         }
         self
     }
-    # [ doc = "Bit 15 - SPI3 reset" ]
-    pub fn spi3rst(&mut self, value: bool) -> &mut Self {
-        const OFFSET: u8 = 15u8;
-        if value {
-            self.bits |= 1 << OFFSET;
-        } else {
-            self.bits &= !(1 << OFFSET);
-        }
-        self
-    }
     # [ doc = "Bit 17 - USART 2 reset" ]
     pub fn usart2rst(&mut self, value: bool) -> &mut Self {
         const OFFSET: u8 = 17u8;
@@ -1014,8 +1043,8 @@ impl Apb1rstrW {
         }
         self
     }
-    # [ doc = "Bit 19 - UART 4 reset" ]
-    pub fn uart4rst(&mut self, value: bool) -> &mut Self {
+    # [ doc = "Bit 19 - USART4 reset" ]
+    pub fn usart4rst(&mut self, value: bool) -> &mut Self {
         const OFFSET: u8 = 19u8;
         if value {
             self.bits |= 1 << OFFSET;
@@ -1024,8 +1053,8 @@ impl Apb1rstrW {
         }
         self
     }
-    # [ doc = "Bit 20 - UART 5 reset" ]
-    pub fn uart5rst(&mut self, value: bool) -> &mut Self {
+    # [ doc = "Bit 20 - USART5 reset" ]
+    pub fn usart5rst(&mut self, value: bool) -> &mut Self {
         const OFFSET: u8 = 20u8;
         if value {
             self.bits |= 1 << OFFSET;
@@ -1054,19 +1083,9 @@ impl Apb1rstrW {
         }
         self
     }
-    # [ doc = "Bit 23 - USB reset" ]
+    # [ doc = "Bit 23 - USB interface reset" ]
     pub fn usbrst(&mut self, value: bool) -> &mut Self {
         const OFFSET: u8 = 23u8;
-        if value {
-            self.bits |= 1 << OFFSET;
-        } else {
-            self.bits &= !(1 << OFFSET);
-        }
-        self
-    }
-    # [ doc = "Bit 25 - CAN reset" ]
-    pub fn canrst(&mut self, value: bool) -> &mut Self {
-        const OFFSET: u8 = 25u8;
         if value {
             self.bits |= 1 << OFFSET;
         } else {
@@ -1077,16 +1096,6 @@ impl Apb1rstrW {
     # [ doc = "Bit 28 - Power interface reset" ]
     pub fn pwrrst(&mut self, value: bool) -> &mut Self {
         const OFFSET: u8 = 28u8;
-        if value {
-            self.bits |= 1 << OFFSET;
-        } else {
-            self.bits &= !(1 << OFFSET);
-        }
-        self
-    }
-    # [ doc = "Bit 29 - DAC interface reset" ]
-    pub fn dacrst(&mut self, value: bool) -> &mut Self {
-        const OFFSET: u8 = 29u8;
         if value {
             self.bits |= 1 << OFFSET;
         } else {
@@ -1131,13 +1140,8 @@ pub struct AhbenrR {
 
 impl AhbenrR {
     # [ doc = "Bit 0 - DMA1 clock enable" ]
-    pub fn dmaen(&self) -> bool {
+    pub fn dma1en(&self) -> bool {
         const OFFSET: u8 = 0u8;
-        self.bits & (1 << OFFSET) != 0
-    }
-    # [ doc = "Bit 1 - DMA2 clock enable" ]
-    pub fn dma2en(&self) -> bool {
-        const OFFSET: u8 = 1u8;
         self.bits & (1 << OFFSET) != 0
     }
     # [ doc = "Bit 2 - SRAM interface clock enable" ]
@@ -1170,34 +1174,9 @@ impl AhbenrR {
         const OFFSET: u8 = 19u8;
         self.bits & (1 << OFFSET) != 0
     }
-    # [ doc = "Bit 20 - I/O port D clock enable" ]
-    pub fn iopden(&self) -> bool {
-        const OFFSET: u8 = 20u8;
-        self.bits & (1 << OFFSET) != 0
-    }
-    # [ doc = "Bit 21 - I/O port E clock enable" ]
-    pub fn iopeen(&self) -> bool {
-        const OFFSET: u8 = 21u8;
-        self.bits & (1 << OFFSET) != 0
-    }
     # [ doc = "Bit 22 - I/O port F clock enable" ]
     pub fn iopfen(&self) -> bool {
         const OFFSET: u8 = 22u8;
-        self.bits & (1 << OFFSET) != 0
-    }
-    # [ doc = "Bit 24 - Touch sensing controller clock enable" ]
-    pub fn tscen(&self) -> bool {
-        const OFFSET: u8 = 24u8;
-        self.bits & (1 << OFFSET) != 0
-    }
-    # [ doc = "Bit 28 - ADC1 and ADC2 clock enable" ]
-    pub fn adc12en(&self) -> bool {
-        const OFFSET: u8 = 28u8;
-        self.bits & (1 << OFFSET) != 0
-    }
-    # [ doc = "Bit 29 - ADC3 and ADC4 clock enable" ]
-    pub fn adc34en(&self) -> bool {
-        const OFFSET: u8 = 29u8;
         self.bits & (1 << OFFSET) != 0
     }
 }
@@ -1214,18 +1193,8 @@ impl AhbenrW {
         AhbenrW { bits: 20u32 }
     }
     # [ doc = "Bit 0 - DMA1 clock enable" ]
-    pub fn dmaen(&mut self, value: bool) -> &mut Self {
+    pub fn dma1en(&mut self, value: bool) -> &mut Self {
         const OFFSET: u8 = 0u8;
-        if value {
-            self.bits |= 1 << OFFSET;
-        } else {
-            self.bits &= !(1 << OFFSET);
-        }
-        self
-    }
-    # [ doc = "Bit 1 - DMA2 clock enable" ]
-    pub fn dma2en(&mut self, value: bool) -> &mut Self {
-        const OFFSET: u8 = 1u8;
         if value {
             self.bits |= 1 << OFFSET;
         } else {
@@ -1293,59 +1262,9 @@ impl AhbenrW {
         }
         self
     }
-    # [ doc = "Bit 20 - I/O port D clock enable" ]
-    pub fn iopden(&mut self, value: bool) -> &mut Self {
-        const OFFSET: u8 = 20u8;
-        if value {
-            self.bits |= 1 << OFFSET;
-        } else {
-            self.bits &= !(1 << OFFSET);
-        }
-        self
-    }
-    # [ doc = "Bit 21 - I/O port E clock enable" ]
-    pub fn iopeen(&mut self, value: bool) -> &mut Self {
-        const OFFSET: u8 = 21u8;
-        if value {
-            self.bits |= 1 << OFFSET;
-        } else {
-            self.bits &= !(1 << OFFSET);
-        }
-        self
-    }
     # [ doc = "Bit 22 - I/O port F clock enable" ]
     pub fn iopfen(&mut self, value: bool) -> &mut Self {
         const OFFSET: u8 = 22u8;
-        if value {
-            self.bits |= 1 << OFFSET;
-        } else {
-            self.bits &= !(1 << OFFSET);
-        }
-        self
-    }
-    # [ doc = "Bit 24 - Touch sensing controller clock enable" ]
-    pub fn tscen(&mut self, value: bool) -> &mut Self {
-        const OFFSET: u8 = 24u8;
-        if value {
-            self.bits |= 1 << OFFSET;
-        } else {
-            self.bits &= !(1 << OFFSET);
-        }
-        self
-    }
-    # [ doc = "Bit 28 - ADC1 and ADC2 clock enable" ]
-    pub fn adc12en(&mut self, value: bool) -> &mut Self {
-        const OFFSET: u8 = 28u8;
-        if value {
-            self.bits |= 1 << OFFSET;
-        } else {
-            self.bits &= !(1 << OFFSET);
-        }
-        self
-    }
-    # [ doc = "Bit 29 - ADC3 and ADC4 clock enable" ]
-    pub fn adc34en(&mut self, value: bool) -> &mut Self {
-        const OFFSET: u8 = 29u8;
         if value {
             self.bits |= 1 << OFFSET;
         } else {
@@ -1394,6 +1313,11 @@ impl Apb2enrR {
         const OFFSET: u8 = 0u8;
         self.bits & (1 << OFFSET) != 0
     }
+    # [ doc = "Bit 9 - ADC 1 interface clock enable" ]
+    pub fn adcen(&self) -> bool {
+        const OFFSET: u8 = 9u8;
+        self.bits & (1 << OFFSET) != 0
+    }
     # [ doc = "Bit 11 - TIM1 Timer clock enable" ]
     pub fn tim1en(&self) -> bool {
         const OFFSET: u8 = 11u8;
@@ -1402,11 +1326,6 @@ impl Apb2enrR {
     # [ doc = "Bit 12 - SPI 1 clock enable" ]
     pub fn spi1en(&self) -> bool {
         const OFFSET: u8 = 12u8;
-        self.bits & (1 << OFFSET) != 0
-    }
-    # [ doc = "Bit 13 - TIM8 Timer clock enable" ]
-    pub fn tim8en(&self) -> bool {
-        const OFFSET: u8 = 13u8;
         self.bits & (1 << OFFSET) != 0
     }
     # [ doc = "Bit 14 - USART1 clock enable" ]
@@ -1427,6 +1346,11 @@ impl Apb2enrR {
     # [ doc = "Bit 18 - TIM17 timer clock enable" ]
     pub fn tim17en(&self) -> bool {
         const OFFSET: u8 = 18u8;
+        self.bits & (1 << OFFSET) != 0
+    }
+    # [ doc = "Bit 22 - MCU debug module clock enable" ]
+    pub fn dbgmcuen(&self) -> bool {
+        const OFFSET: u8 = 22u8;
         self.bits & (1 << OFFSET) != 0
     }
 }
@@ -1452,6 +1376,16 @@ impl Apb2enrW {
         }
         self
     }
+    # [ doc = "Bit 9 - ADC 1 interface clock enable" ]
+    pub fn adcen(&mut self, value: bool) -> &mut Self {
+        const OFFSET: u8 = 9u8;
+        if value {
+            self.bits |= 1 << OFFSET;
+        } else {
+            self.bits &= !(1 << OFFSET);
+        }
+        self
+    }
     # [ doc = "Bit 11 - TIM1 Timer clock enable" ]
     pub fn tim1en(&mut self, value: bool) -> &mut Self {
         const OFFSET: u8 = 11u8;
@@ -1465,16 +1399,6 @@ impl Apb2enrW {
     # [ doc = "Bit 12 - SPI 1 clock enable" ]
     pub fn spi1en(&mut self, value: bool) -> &mut Self {
         const OFFSET: u8 = 12u8;
-        if value {
-            self.bits |= 1 << OFFSET;
-        } else {
-            self.bits &= !(1 << OFFSET);
-        }
-        self
-    }
-    # [ doc = "Bit 13 - TIM8 Timer clock enable" ]
-    pub fn tim8en(&mut self, value: bool) -> &mut Self {
-        const OFFSET: u8 = 13u8;
         if value {
             self.bits |= 1 << OFFSET;
         } else {
@@ -1522,6 +1446,16 @@ impl Apb2enrW {
         }
         self
     }
+    # [ doc = "Bit 22 - MCU debug module clock enable" ]
+    pub fn dbgmcuen(&mut self, value: bool) -> &mut Self {
+        const OFFSET: u8 = 22u8;
+        if value {
+            self.bits |= 1 << OFFSET;
+        } else {
+            self.bits &= !(1 << OFFSET);
+        }
+        self
+    }
 }
 
 # [ repr ( C ) ]
@@ -1558,19 +1492,9 @@ pub struct Apb1enrR {
 }
 
 impl Apb1enrR {
-    # [ doc = "Bit 0 - Timer 2 clock enable" ]
-    pub fn tim2en(&self) -> bool {
-        const OFFSET: u8 = 0u8;
-        self.bits & (1 << OFFSET) != 0
-    }
     # [ doc = "Bit 1 - Timer 3 clock enable" ]
     pub fn tim3en(&self) -> bool {
         const OFFSET: u8 = 1u8;
-        self.bits & (1 << OFFSET) != 0
-    }
-    # [ doc = "Bit 2 - Timer 4 clock enable" ]
-    pub fn tim4en(&self) -> bool {
-        const OFFSET: u8 = 2u8;
         self.bits & (1 << OFFSET) != 0
     }
     # [ doc = "Bit 4 - Timer 6 clock enable" ]
@@ -1578,9 +1502,14 @@ impl Apb1enrR {
         const OFFSET: u8 = 4u8;
         self.bits & (1 << OFFSET) != 0
     }
-    # [ doc = "Bit 5 - Timer 7 clock enable" ]
+    # [ doc = "Bit 5 - TIM7 timer clock enable" ]
     pub fn tim7en(&self) -> bool {
         const OFFSET: u8 = 5u8;
+        self.bits & (1 << OFFSET) != 0
+    }
+    # [ doc = "Bit 8 - Timer 14 clock enable" ]
+    pub fn tim14en(&self) -> bool {
+        const OFFSET: u8 = 8u8;
         self.bits & (1 << OFFSET) != 0
     }
     # [ doc = "Bit 11 - Window watchdog clock enable" ]
@@ -1593,14 +1522,24 @@ impl Apb1enrR {
         const OFFSET: u8 = 14u8;
         self.bits & (1 << OFFSET) != 0
     }
-    # [ doc = "Bit 15 - SPI 3 clock enable" ]
-    pub fn spi3en(&self) -> bool {
-        const OFFSET: u8 = 15u8;
-        self.bits & (1 << OFFSET) != 0
-    }
     # [ doc = "Bit 17 - USART 2 clock enable" ]
     pub fn usart2en(&self) -> bool {
         const OFFSET: u8 = 17u8;
+        self.bits & (1 << OFFSET) != 0
+    }
+    # [ doc = "Bit 18 - USART3 clock enable" ]
+    pub fn usart3en(&self) -> bool {
+        const OFFSET: u8 = 18u8;
+        self.bits & (1 << OFFSET) != 0
+    }
+    # [ doc = "Bit 19 - USART4 clock enable" ]
+    pub fn usart4en(&self) -> bool {
+        const OFFSET: u8 = 19u8;
+        self.bits & (1 << OFFSET) != 0
+    }
+    # [ doc = "Bit 20 - USART5 clock enable" ]
+    pub fn usart5en(&self) -> bool {
+        const OFFSET: u8 = 20u8;
         self.bits & (1 << OFFSET) != 0
     }
     # [ doc = "Bit 21 - I2C 1 clock enable" ]
@@ -1613,24 +1552,14 @@ impl Apb1enrR {
         const OFFSET: u8 = 22u8;
         self.bits & (1 << OFFSET) != 0
     }
-    # [ doc = "Bit 23 - USB clock enable" ]
-    pub fn usben(&self) -> bool {
+    # [ doc = "Bit 23 - USB interface clock enable" ]
+    pub fn usbrst(&self) -> bool {
         const OFFSET: u8 = 23u8;
-        self.bits & (1 << OFFSET) != 0
-    }
-    # [ doc = "Bit 25 - CAN clock enable" ]
-    pub fn canen(&self) -> bool {
-        const OFFSET: u8 = 25u8;
         self.bits & (1 << OFFSET) != 0
     }
     # [ doc = "Bit 28 - Power interface clock enable" ]
     pub fn pwren(&self) -> bool {
         const OFFSET: u8 = 28u8;
-        self.bits & (1 << OFFSET) != 0
-    }
-    # [ doc = "Bit 29 - DAC interface clock enable" ]
-    pub fn dacen(&self) -> bool {
-        const OFFSET: u8 = 29u8;
         self.bits & (1 << OFFSET) != 0
     }
 }
@@ -1646,29 +1575,9 @@ impl Apb1enrW {
     pub fn reset_value() -> Self {
         Apb1enrW { bits: 0u32 }
     }
-    # [ doc = "Bit 0 - Timer 2 clock enable" ]
-    pub fn tim2en(&mut self, value: bool) -> &mut Self {
-        const OFFSET: u8 = 0u8;
-        if value {
-            self.bits |= 1 << OFFSET;
-        } else {
-            self.bits &= !(1 << OFFSET);
-        }
-        self
-    }
     # [ doc = "Bit 1 - Timer 3 clock enable" ]
     pub fn tim3en(&mut self, value: bool) -> &mut Self {
         const OFFSET: u8 = 1u8;
-        if value {
-            self.bits |= 1 << OFFSET;
-        } else {
-            self.bits &= !(1 << OFFSET);
-        }
-        self
-    }
-    # [ doc = "Bit 2 - Timer 4 clock enable" ]
-    pub fn tim4en(&mut self, value: bool) -> &mut Self {
-        const OFFSET: u8 = 2u8;
         if value {
             self.bits |= 1 << OFFSET;
         } else {
@@ -1686,9 +1595,19 @@ impl Apb1enrW {
         }
         self
     }
-    # [ doc = "Bit 5 - Timer 7 clock enable" ]
+    # [ doc = "Bit 5 - TIM7 timer clock enable" ]
     pub fn tim7en(&mut self, value: bool) -> &mut Self {
         const OFFSET: u8 = 5u8;
+        if value {
+            self.bits |= 1 << OFFSET;
+        } else {
+            self.bits &= !(1 << OFFSET);
+        }
+        self
+    }
+    # [ doc = "Bit 8 - Timer 14 clock enable" ]
+    pub fn tim14en(&mut self, value: bool) -> &mut Self {
+        const OFFSET: u8 = 8u8;
         if value {
             self.bits |= 1 << OFFSET;
         } else {
@@ -1716,9 +1635,9 @@ impl Apb1enrW {
         }
         self
     }
-    # [ doc = "Bit 15 - SPI 3 clock enable" ]
-    pub fn spi3en(&mut self, value: bool) -> &mut Self {
-        const OFFSET: u8 = 15u8;
+    # [ doc = "Bit 17 - USART 2 clock enable" ]
+    pub fn usart2en(&mut self, value: bool) -> &mut Self {
+        const OFFSET: u8 = 17u8;
         if value {
             self.bits |= 1 << OFFSET;
         } else {
@@ -1726,9 +1645,29 @@ impl Apb1enrW {
         }
         self
     }
-    # [ doc = "Bit 17 - USART 2 clock enable" ]
-    pub fn usart2en(&mut self, value: bool) -> &mut Self {
-        const OFFSET: u8 = 17u8;
+    # [ doc = "Bit 18 - USART3 clock enable" ]
+    pub fn usart3en(&mut self, value: bool) -> &mut Self {
+        const OFFSET: u8 = 18u8;
+        if value {
+            self.bits |= 1 << OFFSET;
+        } else {
+            self.bits &= !(1 << OFFSET);
+        }
+        self
+    }
+    # [ doc = "Bit 19 - USART4 clock enable" ]
+    pub fn usart4en(&mut self, value: bool) -> &mut Self {
+        const OFFSET: u8 = 19u8;
+        if value {
+            self.bits |= 1 << OFFSET;
+        } else {
+            self.bits &= !(1 << OFFSET);
+        }
+        self
+    }
+    # [ doc = "Bit 20 - USART5 clock enable" ]
+    pub fn usart5en(&mut self, value: bool) -> &mut Self {
+        const OFFSET: u8 = 20u8;
         if value {
             self.bits |= 1 << OFFSET;
         } else {
@@ -1756,19 +1695,9 @@ impl Apb1enrW {
         }
         self
     }
-    # [ doc = "Bit 23 - USB clock enable" ]
-    pub fn usben(&mut self, value: bool) -> &mut Self {
+    # [ doc = "Bit 23 - USB interface clock enable" ]
+    pub fn usbrst(&mut self, value: bool) -> &mut Self {
         const OFFSET: u8 = 23u8;
-        if value {
-            self.bits |= 1 << OFFSET;
-        } else {
-            self.bits &= !(1 << OFFSET);
-        }
-        self
-    }
-    # [ doc = "Bit 25 - CAN clock enable" ]
-    pub fn canen(&mut self, value: bool) -> &mut Self {
-        const OFFSET: u8 = 25u8;
         if value {
             self.bits |= 1 << OFFSET;
         } else {
@@ -1779,16 +1708,6 @@ impl Apb1enrW {
     # [ doc = "Bit 28 - Power interface clock enable" ]
     pub fn pwren(&mut self, value: bool) -> &mut Self {
         const OFFSET: u8 = 28u8;
-        if value {
-            self.bits |= 1 << OFFSET;
-        } else {
-            self.bits &= !(1 << OFFSET);
-        }
-        self
-    }
-    # [ doc = "Bit 29 - DAC interface clock enable" ]
-    pub fn dacen(&mut self, value: bool) -> &mut Self {
-        const OFFSET: u8 = 29u8;
         if value {
             self.bits |= 1 << OFFSET;
         } else {
@@ -2183,29 +2102,9 @@ impl AhbrstrR {
         const OFFSET: u8 = 20u8;
         self.bits & (1 << OFFSET) != 0
     }
-    # [ doc = "Bit 21 - I/O port E reset" ]
-    pub fn ioperst(&self) -> bool {
-        const OFFSET: u8 = 21u8;
-        self.bits & (1 << OFFSET) != 0
-    }
     # [ doc = "Bit 22 - I/O port F reset" ]
     pub fn iopfrst(&self) -> bool {
         const OFFSET: u8 = 22u8;
-        self.bits & (1 << OFFSET) != 0
-    }
-    # [ doc = "Bit 24 - Touch sensing controller reset" ]
-    pub fn tscrst(&self) -> bool {
-        const OFFSET: u8 = 24u8;
-        self.bits & (1 << OFFSET) != 0
-    }
-    # [ doc = "Bit 28 - ADC1 and ADC2 reset" ]
-    pub fn adc12rst(&self) -> bool {
-        const OFFSET: u8 = 28u8;
-        self.bits & (1 << OFFSET) != 0
-    }
-    # [ doc = "Bit 29 - ADC3 and ADC4 reset" ]
-    pub fn adc34rst(&self) -> bool {
-        const OFFSET: u8 = 29u8;
         self.bits & (1 << OFFSET) != 0
     }
 }
@@ -2261,49 +2160,9 @@ impl AhbrstrW {
         }
         self
     }
-    # [ doc = "Bit 21 - I/O port E reset" ]
-    pub fn ioperst(&mut self, value: bool) -> &mut Self {
-        const OFFSET: u8 = 21u8;
-        if value {
-            self.bits |= 1 << OFFSET;
-        } else {
-            self.bits &= !(1 << OFFSET);
-        }
-        self
-    }
     # [ doc = "Bit 22 - I/O port F reset" ]
     pub fn iopfrst(&mut self, value: bool) -> &mut Self {
         const OFFSET: u8 = 22u8;
-        if value {
-            self.bits |= 1 << OFFSET;
-        } else {
-            self.bits &= !(1 << OFFSET);
-        }
-        self
-    }
-    # [ doc = "Bit 24 - Touch sensing controller reset" ]
-    pub fn tscrst(&mut self, value: bool) -> &mut Self {
-        const OFFSET: u8 = 24u8;
-        if value {
-            self.bits |= 1 << OFFSET;
-        } else {
-            self.bits &= !(1 << OFFSET);
-        }
-        self
-    }
-    # [ doc = "Bit 28 - ADC1 and ADC2 reset" ]
-    pub fn adc12rst(&mut self, value: bool) -> &mut Self {
-        const OFFSET: u8 = 28u8;
-        if value {
-            self.bits |= 1 << OFFSET;
-        } else {
-            self.bits &= !(1 << OFFSET);
-        }
-        self
-    }
-    # [ doc = "Bit 29 - ADC3 and ADC4 reset" ]
-    pub fn adc34rst(&mut self, value: bool) -> &mut Self {
-        const OFFSET: u8 = 29u8;
         if value {
             self.bits |= 1 << OFFSET;
         } else {
@@ -2353,18 +2212,6 @@ impl Cfgr2R {
         const OFFSET: u8 = 0u8;
         ((self.bits >> OFFSET) & MASK) as u8
     }
-    # [ doc = "Bits 4:8 - ADC1 and ADC2 prescaler" ]
-    pub fn adc12pres(&self) -> u8 {
-        const MASK: u32 = 31;
-        const OFFSET: u8 = 4u8;
-        ((self.bits >> OFFSET) & MASK) as u8
-    }
-    # [ doc = "Bits 9:13 - ADC3 and ADC4 prescaler" ]
-    pub fn adc34pres(&self) -> u8 {
-        const MASK: u32 = 31;
-        const OFFSET: u8 = 9u8;
-        ((self.bits >> OFFSET) & MASK) as u8
-    }
 }
 
 # [ derive ( Clone , Copy ) ]
@@ -2382,22 +2229,6 @@ impl Cfgr2W {
     pub fn prediv(&mut self, value: u8) -> &mut Self {
         const OFFSET: u8 = 0u8;
         const MASK: u8 = 15;
-        self.bits &= !((MASK as u32) << OFFSET);
-        self.bits |= ((value & MASK) as u32) << OFFSET;
-        self
-    }
-    # [ doc = "Bits 4:8 - ADC1 and ADC2 prescaler" ]
-    pub fn adc12pres(&mut self, value: u8) -> &mut Self {
-        const OFFSET: u8 = 4u8;
-        const MASK: u8 = 31;
-        self.bits &= !((MASK as u32) << OFFSET);
-        self.bits |= ((value & MASK) as u32) << OFFSET;
-        self
-    }
-    # [ doc = "Bits 9:13 - ADC3 and ADC4 prescaler" ]
-    pub fn adc34pres(&mut self, value: u8) -> &mut Self {
-        const OFFSET: u8 = 9u8;
-        const MASK: u8 = 31;
         self.bits &= !((MASK as u32) << OFFSET);
         self.bits |= ((value & MASK) as u32) << OFFSET;
         self
@@ -2449,43 +2280,25 @@ impl Cfgr3R {
         const OFFSET: u8 = 4u8;
         self.bits & (1 << OFFSET) != 0
     }
-    # [ doc = "Bit 5 - I2C2 clock source selection" ]
-    pub fn i2c2sw(&self) -> bool {
-        const OFFSET: u8 = 5u8;
+    # [ doc = "Bit 6 - HDMI CEC clock source selection" ]
+    pub fn cecsw(&self) -> bool {
+        const OFFSET: u8 = 6u8;
+        self.bits & (1 << OFFSET) != 0
+    }
+    # [ doc = "Bit 7 - USB clock source selection" ]
+    pub fn usbsw(&self) -> bool {
+        const OFFSET: u8 = 7u8;
+        self.bits & (1 << OFFSET) != 0
+    }
+    # [ doc = "Bit 8 - ADC clock source selection" ]
+    pub fn adcsw(&self) -> bool {
+        const OFFSET: u8 = 8u8;
         self.bits & (1 << OFFSET) != 0
     }
     # [ doc = "Bits 16:17 - USART2 clock source selection" ]
     pub fn usart2sw(&self) -> u8 {
         const MASK: u32 = 3;
         const OFFSET: u8 = 16u8;
-        ((self.bits >> OFFSET) & MASK) as u8
-    }
-    # [ doc = "Bits 18:19 - USART3 clock source selection" ]
-    pub fn usart3sw(&self) -> u8 {
-        const MASK: u32 = 3;
-        const OFFSET: u8 = 18u8;
-        ((self.bits >> OFFSET) & MASK) as u8
-    }
-    # [ doc = "Bit 8 - Timer1 clock source selection" ]
-    pub fn tim1sw(&self) -> bool {
-        const OFFSET: u8 = 8u8;
-        self.bits & (1 << OFFSET) != 0
-    }
-    # [ doc = "Bit 9 - Timer8 clock source selection" ]
-    pub fn tim8sw(&self) -> bool {
-        const OFFSET: u8 = 9u8;
-        self.bits & (1 << OFFSET) != 0
-    }
-    # [ doc = "Bits 20:21 - UART4 clock source selection" ]
-    pub fn uart4sw(&self) -> u8 {
-        const MASK: u32 = 3;
-        const OFFSET: u8 = 20u8;
-        ((self.bits >> OFFSET) & MASK) as u8
-    }
-    # [ doc = "Bits 22:23 - UART5 clock source selection" ]
-    pub fn uart5sw(&self) -> u8 {
-        const MASK: u32 = 3;
-        const OFFSET: u8 = 22u8;
         ((self.bits >> OFFSET) & MASK) as u8
     }
 }
@@ -2519,9 +2332,29 @@ impl Cfgr3W {
         }
         self
     }
-    # [ doc = "Bit 5 - I2C2 clock source selection" ]
-    pub fn i2c2sw(&mut self, value: bool) -> &mut Self {
-        const OFFSET: u8 = 5u8;
+    # [ doc = "Bit 6 - HDMI CEC clock source selection" ]
+    pub fn cecsw(&mut self, value: bool) -> &mut Self {
+        const OFFSET: u8 = 6u8;
+        if value {
+            self.bits |= 1 << OFFSET;
+        } else {
+            self.bits &= !(1 << OFFSET);
+        }
+        self
+    }
+    # [ doc = "Bit 7 - USB clock source selection" ]
+    pub fn usbsw(&mut self, value: bool) -> &mut Self {
+        const OFFSET: u8 = 7u8;
+        if value {
+            self.bits |= 1 << OFFSET;
+        } else {
+            self.bits &= !(1 << OFFSET);
+        }
+        self
+    }
+    # [ doc = "Bit 8 - ADC clock source selection" ]
+    pub fn adcsw(&mut self, value: bool) -> &mut Self {
+        const OFFSET: u8 = 8u8;
         if value {
             self.bits |= 1 << OFFSET;
         } else {
@@ -2537,17 +2370,100 @@ impl Cfgr3W {
         self.bits |= ((value & MASK) as u32) << OFFSET;
         self
     }
-    # [ doc = "Bits 18:19 - USART3 clock source selection" ]
-    pub fn usart3sw(&mut self, value: u8) -> &mut Self {
-        const OFFSET: u8 = 18u8;
-        const MASK: u8 = 3;
-        self.bits &= !((MASK as u32) << OFFSET);
-        self.bits |= ((value & MASK) as u32) << OFFSET;
-        self
+}
+
+# [ repr ( C ) ]
+pub struct Cr2 {
+    register: ::volatile_register::RW<u32>,
+}
+
+impl Cr2 {
+    pub fn modify<F>(&mut self, f: F)
+        where for<'w> F: FnOnce(&Cr2R, &'w mut Cr2W) -> &'w mut Cr2W
+    {
+        let bits = self.register.read();
+        let r = Cr2R { bits: bits };
+        let mut w = Cr2W { bits: bits };
+        f(&r, &mut w);
+        self.register.write(w.bits);
     }
-    # [ doc = "Bit 8 - Timer1 clock source selection" ]
-    pub fn tim1sw(&mut self, value: bool) -> &mut Self {
+    pub fn read(&self) -> Cr2R {
+        Cr2R { bits: self.register.read() }
+    }
+    pub fn write<F>(&mut self, f: F)
+        where F: FnOnce(&mut Cr2W) -> &mut Cr2W
+    {
+        let mut w = Cr2W::reset_value();
+        f(&mut w);
+        self.register.write(w.bits);
+    }
+}
+
+# [ derive ( Clone , Copy ) ]
+# [ repr ( C ) ]
+pub struct Cr2R {
+    bits: u32,
+}
+
+impl Cr2R {
+    # [ doc = "Bit 0 - HSI14 clock enable" ]
+    pub fn hsi14on(&self) -> bool {
+        const OFFSET: u8 = 0u8;
+        self.bits & (1 << OFFSET) != 0
+    }
+    # [ doc = "Bit 1 - HR14 clock ready flag" ]
+    pub fn hsi14rdy(&self) -> bool {
+        const OFFSET: u8 = 1u8;
+        self.bits & (1 << OFFSET) != 0
+    }
+    # [ doc = "Bit 2 - HSI14 clock request from ADC disable" ]
+    pub fn hsi14dis(&self) -> bool {
+        const OFFSET: u8 = 2u8;
+        self.bits & (1 << OFFSET) != 0
+    }
+    # [ doc = "Bits 3:7 - HSI14 clock trimming" ]
+    pub fn hsi14trim(&self) -> u8 {
+        const MASK: u32 = 31;
+        const OFFSET: u8 = 3u8;
+        ((self.bits >> OFFSET) & MASK) as u8
+    }
+    # [ doc = "Bits 8:15 - HSI14 clock calibration" ]
+    pub fn hsi14cal(&self) -> u8 {
+        const MASK: u32 = 255;
         const OFFSET: u8 = 8u8;
+        ((self.bits >> OFFSET) & MASK) as u8
+    }
+    # [ doc = "Bit 16 - HSI48 clock enable" ]
+    pub fn hsi48on(&self) -> bool {
+        const OFFSET: u8 = 16u8;
+        self.bits & (1 << OFFSET) != 0
+    }
+    # [ doc = "Bit 17 - HSI48 clock ready flag" ]
+    pub fn hsi48rdy(&self) -> bool {
+        const OFFSET: u8 = 17u8;
+        self.bits & (1 << OFFSET) != 0
+    }
+    # [ doc = "Bit 24 - HSI48 factory clock calibration" ]
+    pub fn hsi48cal(&self) -> bool {
+        const OFFSET: u8 = 24u8;
+        self.bits & (1 << OFFSET) != 0
+    }
+}
+
+# [ derive ( Clone , Copy ) ]
+# [ repr ( C ) ]
+pub struct Cr2W {
+    bits: u32,
+}
+
+impl Cr2W {
+    # [ doc = r" Reset value" ]
+    pub fn reset_value() -> Self {
+        Cr2W { bits: 128u32 }
+    }
+    # [ doc = "Bit 0 - HSI14 clock enable" ]
+    pub fn hsi14on(&mut self, value: bool) -> &mut Self {
+        const OFFSET: u8 = 0u8;
         if value {
             self.bits |= 1 << OFFSET;
         } else {
@@ -2555,9 +2471,9 @@ impl Cfgr3W {
         }
         self
     }
-    # [ doc = "Bit 9 - Timer8 clock source selection" ]
-    pub fn tim8sw(&mut self, value: bool) -> &mut Self {
-        const OFFSET: u8 = 9u8;
+    # [ doc = "Bit 2 - HSI14 clock request from ADC disable" ]
+    pub fn hsi14dis(&mut self, value: bool) -> &mut Self {
+        const OFFSET: u8 = 2u8;
         if value {
             self.bits |= 1 << OFFSET;
         } else {
@@ -2565,20 +2481,22 @@ impl Cfgr3W {
         }
         self
     }
-    # [ doc = "Bits 20:21 - UART4 clock source selection" ]
-    pub fn uart4sw(&mut self, value: u8) -> &mut Self {
-        const OFFSET: u8 = 20u8;
-        const MASK: u8 = 3;
+    # [ doc = "Bits 3:7 - HSI14 clock trimming" ]
+    pub fn hsi14trim(&mut self, value: u8) -> &mut Self {
+        const OFFSET: u8 = 3u8;
+        const MASK: u8 = 31;
         self.bits &= !((MASK as u32) << OFFSET);
         self.bits |= ((value & MASK) as u32) << OFFSET;
         self
     }
-    # [ doc = "Bits 22:23 - UART5 clock source selection" ]
-    pub fn uart5sw(&mut self, value: u8) -> &mut Self {
-        const OFFSET: u8 = 22u8;
-        const MASK: u8 = 3;
-        self.bits &= !((MASK as u32) << OFFSET);
-        self.bits |= ((value & MASK) as u32) << OFFSET;
+    # [ doc = "Bit 16 - HSI48 clock enable" ]
+    pub fn hsi48on(&mut self, value: bool) -> &mut Self {
+        const OFFSET: u8 = 16u8;
+        if value {
+            self.bits |= 1 << OFFSET;
+        } else {
+            self.bits &= !(1 << OFFSET);
+        }
         self
     }
 }

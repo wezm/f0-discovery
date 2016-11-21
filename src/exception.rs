@@ -68,7 +68,7 @@ pub unsafe extern "C" fn default_handler_entry_point() {
     // pointer (MSP)
     asm!("mrs r0, MSP
           ldr r1, [r0, #20]
-          b _default_exception_handler_impl" :::: "volatile");
+          bl _default_exception_handler_impl" :::: "volatile");
 
     intrinsics::unreachable();
 }

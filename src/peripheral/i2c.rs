@@ -964,8 +964,7 @@ pub struct Timeoutr {
 
 impl Timeoutr {
     pub fn modify<F>(&mut self, f: F)
-        where for<'w> F: FnOnce(&TimeoutrR, &'w mut TimeoutrW)
-                                -> &'w mut TimeoutrW
+        where for<'w> F: FnOnce(&TimeoutrR, &'w mut TimeoutrW) -> &'w mut TimeoutrW
     {
         let bits = self.register.read();
         let r = TimeoutrR { bits: bits };

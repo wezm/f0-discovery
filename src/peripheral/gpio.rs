@@ -2246,7 +2246,7 @@ pub struct LckrR {
 }
 
 impl LckrR {
-    # [ doc = "Bit 16 - Lok Key" ]
+    # [ doc = "Bit 16 - Port x lock bit y (y= 0..15)" ]
     pub fn lckk(&self) -> bool {
         const OFFSET: u8 = 16u8;
         self.bits & (1 << OFFSET) != 0
@@ -2344,7 +2344,7 @@ impl LckrW {
     pub fn reset_value() -> Self {
         LckrW { bits: 0u32 }
     }
-    # [ doc = "Bit 16 - Lok Key" ]
+    # [ doc = "Bit 16 - Port x lock bit y (y= 0..15)" ]
     pub fn lckk(&mut self, value: bool) -> &mut Self {
         const OFFSET: u8 = 16u8;
         if value {

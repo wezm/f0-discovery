@@ -1,12 +1,12 @@
 [package]
 authors = ["Jorge Aparicio <japaricious@gmail.com>"]
 build = "build.rs"
-description = "A crate to play with the STM32F3DISCOVERY"
-documentation = "https://docs.rs/f3"
-keywords = ["arm", "cortex-m", "stm32f3discovery", "stm32"]
+description = "Crate for interacting with STM32 F0 Discovery board"
+documentation = "https://docs.rs/f0-discovery"
+keywords = ["arm", "cortex-m", "stm32f0discovery", "stm32"]
 license = "MIT OR Apache-2.0"
-name = "f3"
-repository = "https://github.com/japaric/f3"
+name = "f0-discovery"
+repository = "https://github.com/wezm/f0-discovery"
 version = "0.1.0"
 
 [dependencies]

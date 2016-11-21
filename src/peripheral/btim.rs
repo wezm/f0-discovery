@@ -1,4 +1,4 @@
-# [ doc = "Basic timers" ]
+# [ doc = "Basic-timers" ]
 # [ repr ( C ) ]
 pub struct BTim {
     # [ doc = "0x00 - control register 1" ]
@@ -55,19 +55,9 @@ pub struct Cr1R {
 }
 
 impl Cr1R {
-    # [ doc = "Bit 0 - Counter enable" ]
-    pub fn cen(&self) -> bool {
-        const OFFSET: u8 = 0u8;
-        self.bits & (1 << OFFSET) != 0
-    }
-    # [ doc = "Bit 1 - Update disable" ]
-    pub fn udis(&self) -> bool {
-        const OFFSET: u8 = 1u8;
-        self.bits & (1 << OFFSET) != 0
-    }
-    # [ doc = "Bit 2 - Update request source" ]
-    pub fn urs(&self) -> bool {
-        const OFFSET: u8 = 2u8;
+    # [ doc = "Bit 7 - Auto-reload preload enable" ]
+    pub fn arpe(&self) -> bool {
+        const OFFSET: u8 = 7u8;
         self.bits & (1 << OFFSET) != 0
     }
     # [ doc = "Bit 3 - One-pulse mode" ]
@@ -75,14 +65,19 @@ impl Cr1R {
         const OFFSET: u8 = 3u8;
         self.bits & (1 << OFFSET) != 0
     }
-    # [ doc = "Bit 7 - Auto-reload preload enable" ]
-    pub fn arpe(&self) -> bool {
-        const OFFSET: u8 = 7u8;
+    # [ doc = "Bit 2 - Update request source" ]
+    pub fn urs(&self) -> bool {
+        const OFFSET: u8 = 2u8;
         self.bits & (1 << OFFSET) != 0
     }
-    # [ doc = "Bit 11 - UIF status bit remapping" ]
-    pub fn uifremap(&self) -> bool {
-        const OFFSET: u8 = 11u8;
+    # [ doc = "Bit 1 - Update disable" ]
+    pub fn udis(&self) -> bool {
+        const OFFSET: u8 = 1u8;
+        self.bits & (1 << OFFSET) != 0
+    }
+    # [ doc = "Bit 0 - Counter enable" ]
+    pub fn cen(&self) -> bool {
+        const OFFSET: u8 = 0u8;
         self.bits & (1 << OFFSET) != 0
     }
 }
@@ -98,29 +93,9 @@ impl Cr1W {
     pub fn reset_value() -> Self {
         Cr1W { bits: 0u32 }
     }
-    # [ doc = "Bit 0 - Counter enable" ]
-    pub fn cen(&mut self, value: bool) -> &mut Self {
-        const OFFSET: u8 = 0u8;
-        if value {
-            self.bits |= 1 << OFFSET;
-        } else {
-            self.bits &= !(1 << OFFSET);
-        }
-        self
-    }
-    # [ doc = "Bit 1 - Update disable" ]
-    pub fn udis(&mut self, value: bool) -> &mut Self {
-        const OFFSET: u8 = 1u8;
-        if value {
-            self.bits |= 1 << OFFSET;
-        } else {
-            self.bits &= !(1 << OFFSET);
-        }
-        self
-    }
-    # [ doc = "Bit 2 - Update request source" ]
-    pub fn urs(&mut self, value: bool) -> &mut Self {
-        const OFFSET: u8 = 2u8;
+    # [ doc = "Bit 7 - Auto-reload preload enable" ]
+    pub fn arpe(&mut self, value: bool) -> &mut Self {
+        const OFFSET: u8 = 7u8;
         if value {
             self.bits |= 1 << OFFSET;
         } else {
@@ -138,9 +113,9 @@ impl Cr1W {
         }
         self
     }
-    # [ doc = "Bit 7 - Auto-reload preload enable" ]
-    pub fn arpe(&mut self, value: bool) -> &mut Self {
-        const OFFSET: u8 = 7u8;
+    # [ doc = "Bit 2 - Update request source" ]
+    pub fn urs(&mut self, value: bool) -> &mut Self {
+        const OFFSET: u8 = 2u8;
         if value {
             self.bits |= 1 << OFFSET;
         } else {
@@ -148,9 +123,19 @@ impl Cr1W {
         }
         self
     }
-    # [ doc = "Bit 11 - UIF status bit remapping" ]
-    pub fn uifremap(&mut self, value: bool) -> &mut Self {
-        const OFFSET: u8 = 11u8;
+    # [ doc = "Bit 1 - Update disable" ]
+    pub fn udis(&mut self, value: bool) -> &mut Self {
+        const OFFSET: u8 = 1u8;
+        if value {
+            self.bits |= 1 << OFFSET;
+        } else {
+            self.bits &= !(1 << OFFSET);
+        }
+        self
+    }
+    # [ doc = "Bit 0 - Counter enable" ]
+    pub fn cen(&mut self, value: bool) -> &mut Self {
+        const OFFSET: u8 = 0u8;
         if value {
             self.bits |= 1 << OFFSET;
         } else {
@@ -457,11 +442,6 @@ impl CntR {
         const MASK: u32 = 65535;
         const OFFSET: u8 = 0u8;
         ((self.bits >> OFFSET) & MASK) as u16
-    }
-    # [ doc = "Bit 31 - UIF Copy" ]
-    pub fn uifcpy(&self) -> bool {
-        const OFFSET: u8 = 31u8;
-        self.bits & (1 << OFFSET) != 0
     }
 }
 
