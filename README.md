@@ -11,6 +11,8 @@ Crate for interacting with STM32 F0 Discovery board. Most of the work was done b
 [Jorge Aparicio]: https://github.com/japaric
 [STM32F0308DISCOVERY]: http://www.st.com/en/evaluation-tools/stm32f0discovery.html
 
+<blockquote class="twitter-tweet" data-lang="en"><p lang="en" dir="ltr">Proof it works 2/2 <a href="https://t.co/s9cCVoIXtp">pic.twitter.com/s9cCVoIXtp</a></p>&mdash; Wesley Moore (@wezm) <a href="https://twitter.com/wezm/status/790481366060183552">October 24, 2016</a></blockquote> <script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+
 ## Documentation
 
 `cargo doc`
@@ -29,6 +31,8 @@ script can be used to regenerate the peripheral files.
 ## Examples
 
 <https://github.com/wezm/f0-discovery/tree/master/examples>
+
+**Note:** Not all have been ported to this board.
 
 ## License
 
